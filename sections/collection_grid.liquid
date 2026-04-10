@@ -1,0 +1,1306 @@
+{% comment %}
+  collection_grid.liquid — MAISON MESZARICS
+  5-column grid with configurable ad/banner slots.
+  Ad slots replace the first or last cell of any row with an editorial banner.
+{% endcomment %}
+
+<style>
+  /* ─── Brand Tokens ──────────────────────────────────────────────────── */
+  :root {
+    --mg-gold:         #c9a84c;
+    --mg-gold-light:   #e2c87e;
+    --mg-bg:           #0a0a0a;
+    --mg-surface:      #111111;
+    --mg-surface-2:    #1a1a1a;
+    --mg-border:       rgba(201,168,76,.18);
+    --mg-text:         #e8e4dc;
+    --mg-text-muted:   rgba(232,228,220,.55);
+    --mg-font-heading: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+    --mg-font-body:    'Jost', 'Helvetica Neue', sans-serif;
+    --mg-ease:         cubic-bezier(.25,.46,.45,.94);
+    --mg-ease-out:     cubic-bezier(.16,1,.3,1);
+    --mg-radius:       2px;
+    --mg-card-ratio:   3/4;
+    --mg-transition:   .35s var(--mg-ease);
+  }
+
+  /* ─── Section Wrapper ───────────────────────────────────────────────── */
+  .mg-collection-section {
+    background: var(--mg-bg);
+    color: var(--mg-text);
+    padding: 0 0 80px;
+    font-family: var(--mg-font-body);
+  }
+
+  /* ─── Section Header ────────────────────────────────────────────────── */
+  .mg-section-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 64px 40px 40px;
+    gap: 12px;
+  }
+
+  .mg-section-eyebrow {
+    font-size: 10px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--mg-gold);
+    font-family: var(--mg-font-body);
+    font-weight: 400;
+  }
+
+  .mg-section-title {
+    font-family: var(--mg-font-heading);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 300;
+    letter-spacing: .04em;
+    margin: 0;
+    line-height: 1.1;
+    color: var(--mg-text);
+  }
+
+  .mg-section-subtitle {
+    font-size: 13px;
+    color: var(--mg-text-muted);
+    max-width: 520px;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .mg-section-divider {
+    width: 40px;
+    height: 1px;
+    background: var(--mg-gold);
+    opacity: .6;
+    margin: 4px auto;
+  }
+
+  /* ─── Filter Bar ────────────────────────────────────────────────────── */
+  .mg-filter-bar {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 40px 40px;
+  }
+
+  .mg-filter-btn {
+    background: transparent;
+    border: 1px solid var(--mg-border);
+    color: var(--mg-text-muted);
+    font-family: var(--mg-font-body);
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    cursor: pointer;
+    transition: var(--mg-transition);
+    border-radius: var(--mg-radius);
+    white-space: nowrap;
+  }
+
+  .mg-filter-btn:hover,
+  .mg-filter-btn.active {
+    border-color: var(--mg-gold);
+    color: var(--mg-gold);
+    background: rgba(201,168,76,.06);
+  }
+
+  /* ─── Grid Wrapper ──────────────────────────────────────────────────── */
+  .mg-grid-wrapper {
+    padding: 0 24px;
+  }
+
+  /* ─── Row ───────────────────────────────────────────────────────────── */
+  .mg-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  /* ─── Product Card ──────────────────────────────────────────────────── */
+  .mg-card {
+    position: relative;
+    background: var(--mg-surface);
+    border: 1px solid var(--mg-border);
+    border-radius: var(--mg-radius);
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity .55s var(--mg-ease-out),
+      transform .55s var(--mg-ease-out),
+      border-color .3s var(--mg-ease);
+  }
+
+  .mg-card.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .mg-card:hover {
+    border-color: var(--mg-border);
+    box-shadow: 0 16px 48px rgba(0,0,0,.6);
+  }
+
+  /* Card image area */
+  .mg-card__media {
+    position: relative;
+    aspect-ratio: var(--mg-card-ratio);
+    overflow: hidden;
+    background: var(--mg-surface-2);
+  }
+
+  .mg-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .7s var(--mg-ease);
+  }
+
+  .mg-card:hover .mg-card__img {
+    transform: scale(1.06);
+  }
+
+  .mg-card__img--hover {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity .45s var(--mg-ease);
+  }
+
+  .mg-card:hover .mg-card__img--hover {
+    opacity: 1;
+  }
+
+  /* Overlay gradient */
+  .mg-card__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(0,0,0,.65) 0%,
+      rgba(0,0,0,.15) 45%,
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+
+  /* Badge stack */
+  .mg-card__badges {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    pointer-events: none;
+  }
+
+  .mg-badge {
+    display: inline-block;
+    font-size: 8px;
+    font-family: var(--mg-font-body);
+    font-weight: 500;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 1px;
+    line-height: 1.6;
+  }
+
+  .mg-badge--new      { background: var(--mg-gold);    color: #000; }
+  .mg-badge--limited  { background: transparent; border: 1px solid var(--mg-gold); color: var(--mg-gold); }
+  .mg-badge--sale     { background: #a03030;    color: #fff; }
+  .mg-badge--handmade { background: var(--mg-surface-2); color: var(--mg-text-muted); border: 1px solid var(--mg-border); }
+  .mg-badge--preorder { background: transparent; border: 1px solid var(--mg-text-muted); color: var(--mg-text-muted); }
+
+  /* Quick view */
+  .mg-card__quickview {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: rgba(10,10,10,.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--mg-border);
+    color: var(--mg-text);
+    font-family: var(--mg-font-body);
+    font-size: 9px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    padding: 7px 18px;
+    cursor: pointer;
+    white-space: nowrap;
+    opacity: 0;
+    transition:
+      opacity .3s var(--mg-ease),
+      transform .3s var(--mg-ease);
+    z-index: 2;
+    border-radius: var(--mg-radius);
+  }
+
+  .mg-card:hover .mg-card__quickview {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Info panel */
+  .mg-card__info {
+    padding: 14px 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    background: var(--mg-surface);
+  }
+
+  .mg-card__vendor {
+    font-size: 9px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--mg-gold);
+    font-weight: 400;
+  }
+
+  .mg-card__name {
+    font-family: var(--mg-font-heading);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--mg-text);
+    margin: 0;
+    letter-spacing: .01em;
+  }
+
+  .mg-card__price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 2px;
+  }
+
+  .mg-card__price {
+    font-size: 13px;
+    color: var(--mg-text);
+    font-family: var(--mg-font-body);
+    font-weight: 300;
+    letter-spacing: .04em;
+  }
+
+  .mg-card__price--compare {
+    font-size: 11px;
+    color: var(--mg-text-muted);
+    text-decoration: line-through;
+  }
+
+  .mg-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--mg-gold);
+    font-weight: 400;
+    margin-top: 4px;
+    text-decoration: none;
+    transition: gap .2s var(--mg-ease);
+  }
+
+  .mg-card__cta:hover { gap: 10px; }
+
+  .mg-card__cta-line {
+    display: block;
+    width: 18px;
+    height: 1px;
+    background: var(--mg-gold);
+    flex-shrink: 0;
+    transition: width .2s var(--mg-ease);
+  }
+
+  .mg-card:hover .mg-card__cta-line { width: 28px; }
+
+  /* ─── Ad Slot Cell ──────────────────────────────────────────────────── */
+  .mg-ad-slot {
+    position: relative;
+    aspect-ratio: var(--mg-card-ratio);
+    border-radius: var(--mg-radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 28px 24px;
+    border: 1px solid var(--mg-border);
+    background: var(--mg-surface);
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity .55s var(--mg-ease-out),
+      transform .55s var(--mg-ease-out);
+  }
+
+  .mg-ad-slot.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .mg-ad-slot__bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+  }
+
+  .mg-ad-slot__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(0,0,0,.85) 0%,
+      rgba(0,0,0,.4) 50%,
+      rgba(0,0,0,.15) 100%
+    );
+    z-index: 1;
+  }
+
+  .mg-ad-slot__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .mg-ad-slot__eyebrow {
+    font-size: 9px;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: var(--mg-gold);
+    font-family: var(--mg-font-body);
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .mg-ad-slot__eyebrow::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--mg-gold);
+    flex-shrink: 0;
+  }
+
+  .mg-ad-slot__headline {
+    font-family: var(--mg-font-heading);
+    font-size: clamp(1.3rem, 2.2vw, 2rem);
+    font-weight: 300;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--mg-text);
+    line-height: 1.15;
+    margin: 0;
+  }
+
+  .mg-ad-slot__body {
+    font-size: 12px;
+    color: var(--mg-text-muted);
+    line-height: 1.65;
+    margin: 0;
+    max-width: 280px;
+  }
+
+  .mg-ad-slot__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 9px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--mg-gold);
+    text-decoration: none;
+    font-family: var(--mg-font-body);
+    font-weight: 400;
+    margin-top: 6px;
+    position: relative;
+    transition: gap .25s var(--mg-ease);
+  }
+
+  .mg-ad-slot__cta:hover { gap: 14px; }
+
+  .mg-ad-slot__cta::after {
+    content: '';
+    display: block;
+    width: 22px;
+    height: 1px;
+    background: var(--mg-gold);
+    flex-shrink: 0;
+    transition: width .25s var(--mg-ease);
+  }
+
+  .mg-ad-slot__cta:hover::after { width: 34px; }
+
+  /* ─── Fly-to-Cart Dot ───────────────────────────────────────────────── */
+  .mg-fly-dot {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--mg-gold);
+    pointer-events: none;
+    z-index: 9999;
+    transform: scale(1);
+    opacity: 1;
+    transition: none;
+  }
+
+  /* ─── Quick View Modal ──────────────────────────────────────────────── */
+  .mg-qv-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.75);
+    backdrop-filter: blur(6px);
+    z-index: 8000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s var(--mg-ease);
+  }
+
+  .mg-qv-overlay.is-open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .mg-qv-modal {
+    background: var(--mg-surface);
+    border: 1px solid var(--mg-border);
+    border-radius: 4px;
+    max-width: 860px;
+    width: 92%;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    transform: scale(.97) translateY(12px);
+    transition: transform .35s var(--mg-ease-out);
+  }
+
+  .mg-qv-overlay.is-open .mg-qv-modal {
+    transform: scale(1) translateY(0);
+  }
+
+  .mg-qv-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: var(--mg-text-muted);
+    font-size: 22px;
+    cursor: pointer;
+    z-index: 2;
+    transition: color .2s;
+  }
+
+  .mg-qv-close:hover { color: var(--mg-text); }
+
+  .mg-qv-image {
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    width: 100%;
+    display: block;
+  }
+
+  .mg-qv-details {
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .mg-qv-vendor {
+    font-size: 9px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--mg-gold);
+  }
+
+  .mg-qv-title {
+    font-family: var(--mg-font-heading);
+    font-size: 1.75rem;
+    font-weight: 300;
+    line-height: 1.2;
+    margin: 0;
+    color: var(--mg-text);
+  }
+
+  .mg-qv-price {
+    font-size: 15px;
+    color: var(--mg-text);
+    letter-spacing: .05em;
+  }
+
+  .mg-qv-desc {
+    font-size: 13px;
+    color: var(--mg-text-muted);
+    line-height: 1.7;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .mg-qv-atc {
+    display: block;
+    width: 100%;
+    background: var(--mg-gold);
+    color: #000;
+    border: none;
+    font-family: var(--mg-font-body);
+    font-size: 10px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    padding: 14px;
+    cursor: pointer;
+    border-radius: var(--mg-radius);
+    transition: background .25s var(--mg-ease);
+    font-weight: 500;
+  }
+
+  .mg-qv-atc:hover { background: var(--mg-gold-light); }
+
+  /* ─── Section Footer ────────────────────────────────────────────────── */
+  .mg-section-footer {
+    text-align: center;
+    padding: 48px 40px 0;
+  }
+
+  .mg-footer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 10px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--mg-text-muted);
+    text-decoration: none;
+    transition: color .25s var(--mg-ease);
+  }
+
+  .mg-footer-link:hover { color: var(--mg-gold); }
+
+  .mg-footer-link::after {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: currentColor;
+    transition: width .25s var(--mg-ease);
+  }
+
+  .mg-footer-link:hover::after { width: 40px; }
+
+  /* ─── Responsive ────────────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .mg-row {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .mg-grid-wrapper { padding: 0 16px; }
+    .mg-section-header { padding: 48px 24px 28px; }
+    .mg-filter-bar { padding: 0 24px 28px; }
+  }
+
+  @media (max-width: 600px) {
+    .mg-row {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    /* Ad slots become full-width banners on mobile */
+    .mg-ad-slot {
+      grid-column: 1 / -1;
+      aspect-ratio: 16/7;
+    }
+    .mg-grid-wrapper { padding: 0 12px; }
+    .mg-section-header { padding: 36px 20px 20px; }
+    .mg-filter-bar { padding: 0 20px 20px; }
+    .mg-qv-modal {
+      grid-template-columns: 1fr;
+    }
+    .mg-qv-image { aspect-ratio: 4/3; }
+  }
+</style>
+
+<section
+  class="mg-collection-section"
+  id="mg-collection-{{ section.id }}"
+  data-section-id="{{ section.id }}"
+>
+
+  {%- comment -%} ── Section Header ── {%- endcomment -%}
+  {%- if section.settings.show_header -%}
+  <header class="mg-section-header">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="mg-section-eyebrow">{{ section.settings.eyebrow }}</p>
+    {%- endif -%}
+    <div class="mg-section-divider"></div>
+    {%- if section.settings.title != blank -%}
+      <h2 class="mg-section-title">{{ section.settings.title }}</h2>
+    {%- endif -%}
+    {%- if section.settings.subtitle != blank -%}
+      <p class="mg-section-subtitle">{{ section.settings.subtitle }}</p>
+    {%- endif -%}
+  </header>
+  {%- endif -%}
+
+  {%- comment -%} ── Filter Bar ── {%- endcomment -%}
+  {%- if section.settings.show_filters and collection.all_tags.size > 0 -%}
+  <nav class="mg-filter-bar" aria-label="Filter products">
+    <button class="mg-filter-btn active" data-filter="*">
+      {{- section.settings.filter_all_label | default: 'All' -}}
+    </button>
+    {%- for tag in collection.all_tags -%}
+      <button class="mg-filter-btn" data-filter="{{ tag | handleize }}">
+        {{- tag -}}
+      </button>
+    {%- endfor -%}
+  </nav>
+  {%- endif -%}
+
+  {%- comment -%} ── 5-Column Grid ── {%- endcomment -%}
+  <div class="mg-grid-wrapper">
+    {%- liquid
+      assign cols_per_row  = 5
+      assign products      = collection.products
+      assign product_count = products.size
+      assign prod_idx      = 0      # index into the products array
+      assign row_idx       = 0      # 0-based row counter
+    -%}
+
+    {%- comment -%}
+      Row sentinel: supports up to 100 rows (500 products at 5/row, or fewer when ad slots
+      reduce products per row). Shopify caps collections at 250 products by default, so
+      100 rows is a safe upper bound even with multiple ad slot rows reducing capacity.
+    {%- endcomment -%}
+    {%- for _row_sentinel in (1..100) -%}
+      {%- comment -%} stop when all products rendered {%- endcomment -%}
+      {%- if prod_idx >= product_count -%}{%- break -%}{%- endif -%}
+
+      {%- comment -%} ── Resolve ad slots for this row ── {%- endcomment -%}
+      {%- assign row_ad_first = nil -%}
+      {%- assign row_ad_last  = nil -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'ad_slot' -%}
+          {%- assign b_row = block.settings.row | minus: 1 -%}
+          {%- if b_row == row_idx -%}
+            {%- if block.settings.position == 'first' -%}
+              {%- assign row_ad_first = block -%}
+            {%- elsif block.settings.position == 'last' -%}
+              {%- assign row_ad_last = block -%}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- comment -%} ── How many product cells in this row? ── {%- endcomment -%}
+      {%- assign ad_count     = 0 -%}
+      {%- if row_ad_first != nil -%}{%- assign ad_count = ad_count | plus: 1 -%}{%- endif -%}
+      {%- if row_ad_last  != nil -%}{%- assign ad_count = ad_count | plus: 1 -%}{%- endif -%}
+      {%- assign prod_cells   = cols_per_row | minus: ad_count -%}
+      {%- assign row_end_idx  = prod_idx | plus: prod_cells -%}
+
+      <div class="mg-row">
+
+        {%- comment -%} ── Left ad slot (position: first) ── {%- endcomment -%}
+        {%- if row_ad_first != nil -%}
+          {%- assign ad = row_ad_first -%}
+          <div
+            class="mg-ad-slot"
+            style="background-color: {{ ad.settings.bg_color }};"
+            {{ ad.shopify_attributes }}
+          >
+            {%- if ad.settings.bg_image != blank -%}
+              <div
+                class="mg-ad-slot__bg"
+                style="background-image: url('{{ ad.settings.bg_image | image_url: width: 800 }}');"
+              ></div>
+            {%- endif -%}
+            <div class="mg-ad-slot__overlay"></div>
+            <div class="mg-ad-slot__content">
+              {%- if ad.settings.eyebrow != blank -%}
+                <span class="mg-ad-slot__eyebrow">{{ ad.settings.eyebrow | escape }}</span>
+              {%- endif -%}
+              {%- if ad.settings.headline != blank -%}
+                <h3 class="mg-ad-slot__headline">{{ ad.settings.headline | newline_to_br }}</h3>
+              {%- endif -%}
+              {%- if ad.settings.body != blank -%}
+                <p class="mg-ad-slot__body">{{ ad.settings.body | escape }}</p>
+              {%- endif -%}
+              {%- if ad.settings.cta_label != blank -%}
+                <a
+                  class="mg-ad-slot__cta"
+                  href="{{ ad.settings.cta_url | default: '#' }}"
+                >{{ ad.settings.cta_label | escape }}</a>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} ── Product cells ── {%- endcomment -%}
+        {%- for i in (prod_idx..99) -%}
+          {%- if i >= row_end_idx or i >= product_count -%}{%- break -%}{%- endif -%}
+          {%- assign product = products[i] -%}
+          {%- comment -%} 80ms stagger per card within the row for the entrance animation {%- endcomment -%}
+          {%- assign card_delay = forloop.index0 | times: 80 -%}
+          <article
+            class="mg-card"
+            data-handle="{{ product.handle }}"
+            data-tags="{{ product.tags | join: ',' | handleize }}"
+            style="transition-delay: {{ card_delay }}ms"
+            tabindex="0"
+            aria-label="{{ product.title | escape }}"
+          >
+            {%- comment -%} ── Image ── {%- endcomment -%}
+            <div class="mg-card__media">
+              {%- if product.featured_image -%}
+                <img
+                  class="mg-card__img"
+                  src="{{ product.featured_image | image_url: width: 600 }}"
+                  alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                  loading="lazy"
+                  width="600"
+                  height="800"
+                />
+                {%- if product.images[1] -%}
+                  <img
+                    class="mg-card__img mg-card__img--hover"
+                    src="{{ product.images[1] | image_url: width: 600 }}"
+                    alt="{{ product.images[1].alt | default: product.title | escape }}"
+                    loading="lazy"
+                    width="600"
+                    height="800"
+                  />
+                {%- endif -%}
+              {%- else -%}
+                {{ 'product-1' | placeholder_svg_tag: 'mg-card__img' }}
+              {%- endif -%}
+
+              <div class="mg-card__overlay"></div>
+
+              {%- comment -%} ── Badges ── {%- endcomment -%}
+              <div class="mg-card__badges">
+                {%- if product.tags contains 'new' or product.tags contains 'New' -%}
+                  <span class="mg-badge mg-badge--new">New</span>
+                {%- endif -%}
+                {%- if product.tags contains 'limited' or product.tags contains 'Limited' -%}
+                  <span class="mg-badge mg-badge--limited">Limited</span>
+                {%- endif -%}
+                {%- if product.compare_at_price > product.price -%}
+                  <span class="mg-badge mg-badge--sale">Sale</span>
+                {%- endif -%}
+                {%- if product.tags contains 'handmade' or product.tags contains 'Handmade' -%}
+                  <span class="mg-badge mg-badge--handmade">Handmade</span>
+                {%- endif -%}
+                {%- if product.tags contains 'preorder' or product.tags contains 'Preorder' -%}
+                  <span class="mg-badge mg-badge--preorder">Pre-order</span>
+                {%- endif -%}
+              </div>
+
+              {%- comment -%} ── Quick View ── {%- endcomment -%}
+              {%- if section.settings.show_quickview -%}
+                <button
+                  class="mg-card__quickview"
+                  data-qv-handle="{{ product.handle }}"
+                  data-qv-title="{{ product.title | escape }}"
+                  data-qv-vendor="{{ product.vendor | escape }}"
+                  data-qv-price="{{ product.price | money }}"
+                  data-qv-image="{{ product.featured_image | image_url: width: 900 }}"
+                  data-qv-desc="{{ product.description | strip_html | escape }}"
+                  data-qv-url="{{ product.url }}"
+                  aria-label="Quick view {{ product.title | escape }}"
+                >
+                  Quick View
+                </button>
+              {%- endif -%}
+            </div>
+
+            {%- comment -%} ── Info ── {%- endcomment -%}
+            <div class="mg-card__info">
+              {%- if product.vendor != blank -%}
+                <span class="mg-card__vendor">{{ product.vendor }}</span>
+              {%- endif -%}
+              <h3 class="mg-card__name">{{ product.title }}</h3>
+              <div class="mg-card__price-row">
+                <span class="mg-card__price">{{ product.price | money }}</span>
+                {%- if product.compare_at_price > product.price -%}
+                  <span class="mg-card__price mg-card__price--compare">
+                    {{ product.compare_at_price | money }}
+                  </span>
+                {%- endif -%}
+              </div>
+              <a href="{{ product.url }}" class="mg-card__cta">
+                <span class="mg-card__cta-line"></span>
+                {{ section.settings.card_cta_label | default: 'Discover' }}
+              </a>
+            </div>
+          </article>
+        {%- endfor -%}
+
+        {%- comment -%} ── Right ad slot (position: last) ── {%- endcomment -%}
+        {%- if row_ad_last != nil -%}
+          {%- assign ad = row_ad_last -%}
+          <div
+            class="mg-ad-slot"
+            style="background-color: {{ ad.settings.bg_color }};"
+            {{ ad.shopify_attributes }}
+          >
+            {%- if ad.settings.bg_image != blank -%}
+              <div
+                class="mg-ad-slot__bg"
+                style="background-image: url('{{ ad.settings.bg_image | image_url: width: 800 }}');"
+              ></div>
+            {%- endif -%}
+            <div class="mg-ad-slot__overlay"></div>
+            <div class="mg-ad-slot__content">
+              {%- if ad.settings.eyebrow != blank -%}
+                <span class="mg-ad-slot__eyebrow">{{ ad.settings.eyebrow | escape }}</span>
+              {%- endif -%}
+              {%- if ad.settings.headline != blank -%}
+                <h3 class="mg-ad-slot__headline">{{ ad.settings.headline | newline_to_br }}</h3>
+              {%- endif -%}
+              {%- if ad.settings.body != blank -%}
+                <p class="mg-ad-slot__body">{{ ad.settings.body | escape }}</p>
+              {%- endif -%}
+              {%- if ad.settings.cta_label != blank -%}
+                <a
+                  class="mg-ad-slot__cta"
+                  href="{{ ad.settings.cta_url | default: '#' }}"
+                >{{ ad.settings.cta_label | escape }}</a>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+      </div>
+
+      {%- assign prod_idx = prod_idx | plus: prod_cells -%}
+      {%- assign row_idx  = row_idx  | plus: 1 -%}
+
+    {%- endfor -%}
+  </div>
+
+  {%- comment -%} ── Footer Link ── {%- endcomment -%}
+  {%- if section.settings.footer_link != blank and section.settings.footer_label != blank -%}
+    <div class="mg-section-footer">
+      <a class="mg-footer-link" href="{{ section.settings.footer_link }}">
+        {{ section.settings.footer_label }}
+      </a>
+    </div>
+  {%- endif -%}
+
+</section>
+
+{%- comment -%} ── Quick View Modal (outside section for z-index stacking) ── {%- endcomment -%}
+{%- if section.settings.show_quickview -%}
+<div class="mg-qv-overlay" id="mg-qv-overlay-{{ section.id }}" role="dialog" aria-modal="true" aria-label="Quick view">
+  <div class="mg-qv-modal">
+    <button class="mg-qv-close" aria-label="Close">&times;</button>
+    <img class="mg-qv-image" id="mg-qv-img-{{ section.id }}" src="" alt="" loading="lazy" />
+    <div class="mg-qv-details">
+      <p class="mg-qv-vendor" id="mg-qv-vendor-{{ section.id }}"></p>
+      <h2 class="mg-qv-title"  id="mg-qv-title-{{ section.id }}"></h2>
+      <p class="mg-qv-price"   id="mg-qv-price-{{ section.id }}"></p>
+      <div class="mg-qv-desc"  id="mg-qv-desc-{{ section.id }}"></div>
+      <button class="mg-qv-atc" id="mg-qv-atc-{{ section.id }}">
+        {{ section.settings.atc_label | default: 'Add to Cart' }}
+      </button>
+    </div>
+  </div>
+</div>
+{%- endif -%}
+
+<script>
+(function () {
+  'use strict';
+
+  var SID = {{ section.id | json }};
+
+  /* ────────────────────────────────────────────────────
+     Helpers
+  ──────────────────────────────────────────────────── */
+  function qs(sel, ctx) { return (ctx || document).querySelector(sel); }
+  function qsa(sel, ctx) { return Array.from((ctx || document).querySelectorAll(sel)); }
+
+  var section   = qs('#mg-collection-' + SID);
+  if (!section) return;
+
+  /* ────────────────────────────────────────────────────
+     1. Entrance animation — IntersectionObserver
+  ──────────────────────────────────────────────────── */
+  var ioOptions = { threshold: 0.12 };
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, ioOptions);
+
+  qsa('.mg-card, .mg-ad-slot', section).forEach(function (el) {
+    io.observe(el);
+  });
+
+  /* ────────────────────────────────────────────────────
+     2. Card click → navigate (unless clicking interactive child)
+  ──────────────────────────────────────────────────── */
+  qsa('.mg-card', section).forEach(function (card) {
+    card.addEventListener('click', function (e) {
+      if (e.target.closest('button, a, .mg-card__quickview')) return;
+      var handle = card.dataset.handle;
+      if (handle) window.location.href = '/products/' + handle;
+    });
+
+    card.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        var handle = card.dataset.handle;
+        if (handle) window.location.href = '/products/' + handle;
+      }
+    });
+  });
+
+  /* ────────────────────────────────────────────────────
+     3. Filter bar
+  ──────────────────────────────────────────────────── */
+  var filterBtns = qsa('.mg-filter-btn', section);
+  filterBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var filter = btn.dataset.filter;
+
+      filterBtns.forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+
+      qsa('.mg-card', section).forEach(function (card) {
+        if (filter === '*') {
+          card.style.display = '';
+          return;
+        }
+        var tags = (card.dataset.tags || '').split(',');
+        card.style.display = tags.indexOf(filter) !== -1 ? '' : 'none';
+      });
+    });
+  });
+
+  /* ────────────────────────────────────────────────────
+     4. Quick View modal
+  ──────────────────────────────────────────────────── */
+  var qvOverlay = qs('#mg-qv-overlay-' + SID);
+  if (qvOverlay) {
+    var qvImg    = qs('#mg-qv-img-'    + SID);
+    var qvVendor = qs('#mg-qv-vendor-' + SID);
+    var qvTitle  = qs('#mg-qv-title-'  + SID);
+    var qvPrice  = qs('#mg-qv-price-'  + SID);
+    var qvDesc   = qs('#mg-qv-desc-'   + SID);
+    var qvAtc    = qs('#mg-qv-atc-'    + SID);
+
+    function openQV(btn) {
+      qvImg.src         = btn.dataset.qvImage  || '';
+      qvImg.alt         = btn.dataset.qvTitle  || '';
+      qvVendor.textContent = btn.dataset.qvVendor || '';
+      qvTitle.textContent  = btn.dataset.qvTitle  || '';
+      qvPrice.textContent  = btn.dataset.qvPrice  || '';
+      qvDesc.textContent   = btn.dataset.qvDesc   || '';
+      qvAtc.dataset.qvUrl  = btn.dataset.qvUrl    || '';
+      qvOverlay.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeQV() {
+      qvOverlay.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+
+    qsa('.mg-card__quickview', section).forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        openQV(btn);
+      });
+    });
+
+    qs('.mg-qv-close', qvOverlay).addEventListener('click', closeQV);
+
+    qvOverlay.addEventListener('click', function (e) {
+      if (e.target === qvOverlay) closeQV();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeQV();
+    });
+
+    /* Add to Cart from modal */
+    qvAtc.addEventListener('click', function () {
+      var url = qvAtc.dataset.qvUrl;
+      if (!url) return;
+      window.location.href = url;
+    });
+  }
+
+  /* ────────────────────────────────────────────────────
+     5. Parallax scroll effect (subtle, on section header)
+  ──────────────────────────────────────────────────── */
+  var header = qs('.mg-section-header', section);
+  if (header && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+    function onScroll() {
+      var rect   = section.getBoundingClientRect();
+      var ratio  = Math.max(0, Math.min(1, -rect.top / (section.offsetHeight || 1)));
+      header.style.transform = 'translateY(' + (ratio * 30).toFixed(1) + 'px)';
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  /* ────────────────────────────────────────────────────
+     6. Add-to-cart fly animation (for future cart integration)
+     Triggered by dispatching 'mg:fly-to-cart' CustomEvent
+     with { detail: { sourceEl } }
+  ──────────────────────────────────────────────────── */
+  function flyDot(sourceEl) {
+    var cartIcon = qs('[data-cart-icon], .cart-icon, .header__cart-toggle');
+    if (!cartIcon) return; /* no cart icon found; skip animation */
+
+    var from  = sourceEl.getBoundingClientRect();
+    var to    = cartIcon.getBoundingClientRect();
+    var fromX = from.left + from.width  / 2 - 5;
+    var fromY = from.top  + from.height / 2 - 5;
+    var toX   = to.left   + to.width    / 2 - 5;
+    var toY   = to.top    + to.height   / 2 - 5;
+
+    var dot = document.createElement('div');
+    dot.className = 'mg-fly-dot';
+    dot.style.cssText = 'left:' + fromX + 'px;top:' + fromY + 'px;';
+
+    document.body.appendChild(dot);
+
+    var start = performance.now();
+    var dur   = 750;
+
+    function step(ts) {
+      var t    = Math.min((ts - start) / dur, 1);
+      var ease = 1 - Math.pow(1 - t, 3);
+      dot.style.left      = (fromX + (toX - fromX) * ease) + 'px';
+      dot.style.top       = (fromY + (toY - fromY) * ease) + 'px';
+      dot.style.opacity   = '' + (1 - ease * 0.5);
+      dot.style.transform = 'scale(' + (1 - ease * 0.6) + ')';
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else {
+        dot.remove();
+      }
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  section.addEventListener('mg:fly-to-cart', function (e) {
+    if (e.detail && e.detail.sourceEl) flyDot(e.detail.sourceEl);
+  });
+
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Collection Grid",
+  "tag": "div",
+  "class": "mg-collection-grid-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_header",
+      "label": "Show header",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow label",
+      "default": "The Collection"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "MAISON MESZARICS"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle / description",
+      "default": "Curated pieces for the modern wardrobe."
+    },
+    {
+      "type": "header",
+      "content": "Filters"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "Show filter bar",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "filter_all_label",
+      "label": "\"All\" filter label",
+      "default": "All"
+    },
+    {
+      "type": "header",
+      "content": "Product Cards"
+    },
+    {
+      "type": "text",
+      "id": "card_cta_label",
+      "label": "Card CTA label",
+      "default": "Discover"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quickview",
+      "label": "Enable Quick View",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "atc_label",
+      "label": "Add to Cart label",
+      "default": "Add to Cart"
+    },
+    {
+      "type": "header",
+      "content": "Footer"
+    },
+    {
+      "type": "text",
+      "id": "footer_label",
+      "label": "Footer link label",
+      "default": "View all pieces"
+    },
+    {
+      "type": "url",
+      "id": "footer_link",
+      "label": "Footer link URL"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "ad_slot",
+      "name": "Ad / Banner Slot",
+      "settings": [
+        {
+          "type": "range",
+          "id": "row",
+          "label": "Row (1 = first row)",
+          "min": 1,
+          "max": 10,
+          "step": 1,
+          "default": 1
+        },
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position in row",
+          "options": [
+            { "value": "first", "label": "First column (left)" },
+            { "value": "last",  "label": "Last column (right)" }
+          ],
+          "default": "first"
+        },
+        {
+          "type": "header",
+          "content": "Background"
+        },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Background color",
+          "default": "#111111"
+        },
+        {
+          "type": "image_picker",
+          "id": "bg_image",
+          "label": "Background image (optional)"
+        },
+        {
+          "type": "header",
+          "content": "Content"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow label",
+          "default": "New Arrival"
+        },
+        {
+          "type": "text",
+          "id": "headline",
+          "label": "Headline",
+          "default": "The New\nSilhouette"
+        },
+        {
+          "type": "textarea",
+          "id": "body",
+          "label": "Body copy"
+        },
+        {
+          "type": "text",
+          "id": "cta_label",
+          "label": "CTA label",
+          "default": "Explore"
+        },
+        {
+          "type": "url",
+          "id": "cta_url",
+          "label": "CTA link URL"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Collection Grid",
+      "blocks": [
+        {
+          "type": "ad_slot",
+          "settings": {
+            "row": 1,
+            "position": "first",
+            "eyebrow": "New Season",
+            "headline": "The New Silhouette",
+            "cta_label": "Explore"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
