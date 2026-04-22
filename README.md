@@ -1,13 +1,66 @@
-<h1 align="center">Hi 👋, I'm Leandro Casavalle</h1>
-<h3 align="center">A passionate fullstack developer from Argentina</h3>
+<h1 align="center">Hola, soy Leandro Casavalle 👋</h1>
+<p align="center">
+  <strong>Fullstack Developer | Automation Expert | Shopify Specialist</strong>
+</p>
 
-- 🌱 I’m currently learning **Angular**
+<p align="center">
+  <a href="https://hoty.com.ar" target="_blank">
+    <img src="https://img.shields.io/badge/Agency-Hoty.com.ar-E94560?style=for-the-badge&logo=rocket" alt="Hoty Agency">
+  </a>
+</p>
 
-- 👨‍💻 All of my projects are available at [https://leandro-casavalle.netlify.app/](https://leandro-casavalle.netlify.app/)
+<p align="center">
+  <img src="https://img.shields.io/badge/Location-Tucumán,%20Argentina-blue?style=flat-square" alt="Tucumán, Argentina">
+  <img src="https://img.shields.io/badge/Focus-Automation%20%26%20E--commerce-brightgreen?style=flat-square" alt="Focus">
+</p>
 
-- 💬 Ask me about **.NET, C#, C, C++**
+---
 
-- 📫 How to reach me **leandrocasavalle10@gmail.com**
+### 🚀 Mi Enfoque Actual
 
-<h3 align="left">Languages and Tools:</h3>
-<p align="left"> <a href="https://getbootstrap.com" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/bootstrap/bootstrap-plain-wordmark.svg" alt="bootstrap" width="40" height="40"/> </a> <a href="https://www.cprogramming.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/c/c-original.svg" alt="c" width="40" height="40"/> </a> <a href="https://www.w3schools.com/cpp/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/cplusplus/cplusplus-original.svg" alt="cplusplus" width="40" height="40"/> </a> <a href="https://www.w3schools.com/cs/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/csharp/csharp-original.svg" alt="csharp" width="40" height="40"/> </a> <a href="https://www.w3schools.com/css/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original-wordmark.svg" alt="css3" width="40" height="40"/> </a> <a href="https://dotnet.microsoft.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/dot-net/dot-net-original-wordmark.svg" alt="dotnet" width="40" height="40"/> </a> <a href="https://git-scm.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/git-scm/git-scm-icon.svg" alt="git" width="40" height="40"/> </a> <a href="https://www.w3.org/html/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original-wordmark.svg" alt="html5" width="40" height="40"/> </a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/> </a> <a href="https://www.microsoft.com/en-us/sql-server" target="_blank" rel="noreferrer"> <img src="https://www.svgrepo.com/show/303229/microsoft-sql-server-logo.svg" alt="mssql" width="40" height="40"/> </a> <a href="https://www.mysql.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mysql/mysql-original-wordmark.svg" alt="mysql" width="40" height="40"/> </a> <a href="https://postman.com" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/getpostman/getpostman-icon.svg" alt="postman" width="40" height="40"/> </a> </p>
+Me especializo en crear ecosistemas digitales que funcionan solos. Desde el desarrollo de tiendas de alto rendimiento en **Shopify** hasta la orquestación de flujos de trabajo complejos con **n8n** y **Chatwoot**.
+
+- 🏢 **Hoty:** Co-fundador y Desarrollador en [hoty.com.ar](https://hoty.com.ar).
+- 🛠️ **En qué estoy trabajando:** Desarrollo de temas personalizados (Liquid), aplicaciones en **Node.js** y soluciones de atención automatizada.
+- 🎨 **Diseño:** Apasionado por la experiencia de usuario (UX/UI) minimalista y funcional.
+- 🤖 **Automatización:** Conectando el mundo mediante n8n, Chatwoot y scripts personalizados en **Python**.
+
+---
+
+### 🛠️ Tech Stack & Tools
+
+#### **Development & Frameworks**
+<p align="left">
+  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js"/>
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React"/>
+  <img src="https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D" alt="Vue.js"/>
+  <img src="https://img.shields.io/badge/Shopify%20Liquid-95BF47?style=for-the-badge&logo=shopify&logoColor=white" alt="Liquid"/>
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
+</p>
+
+#### **Automation & Data**
+<p align="left">
+  <img src="https://img.shields.io/badge/n8n-FF6D5A?style=for-the-badge&logo=n8n&logoColor=white" alt="n8n"/>
+  <img src="https://img.shields.io/badge/Chatwoot-1F2937?style=for-the-badge&logo=chatwoot&logoColor=white" alt="Chatwoot"/>
+  <img src="https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL"/>
+  <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL"/>
+</p>
+
+---
+
+### 📈 Mi Actividad
+<p align="center">
+  <img src="https://github-readme-stats.vercel.app/api?username=LeandroCasavalle&show_icons=true&theme=dracula" alt="Estadísticas de Leandro" width="48%">
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=LeandroCasavalle&layout=compact&theme=dracula" alt="Lenguajes" width="48%">
+</p>
+
+---
+
+### 📫 Conectemos
+- **Portfolio:** [leandro-casavalle.netlify.app](https://leandro-casavalle.netlify.app/)
+- **Agencia:** [hoty.com.ar](https://hoty.com.ar)
+- **Email:** [leandrocasavalle10@gmail.com](mailto:leandrocasavalle10@gmail.com)
+
+<p align="center">
+  <em>Construyendo el futuro de la automatización desde Tucumán.</em>
+</p>
