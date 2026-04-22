@@ -20,7 +20,8 @@
 
 Me especializo en crear ecosistemas digitales que funcionan solos. Desde el desarrollo de tiendas de alto rendimiento en **Shopify** hasta la orquestación de flujos de trabajo complejos con **n8n** y **Chatwoot**.
 
-- 🏢 **Hoty:** Co-fundador y Desarrollador en [hoty.com.ar](https://hoty.com.ar).
+- 🏢 **Hoty:** Fundador de [hoty.com.ar](https://hoty.com.ar).
+- 🚀 **Dovanet:** Desarrollador de software en [dovanet.com.ar](https://dovanet.com.ar)
 - 🛠️ **En qué estoy trabajando:** Desarrollo de temas personalizados (Liquid), aplicaciones en **Node.js** y soluciones de atención automatizada.
 - 🎨 **Diseño:** Apasionado por la experiencia de usuario (UX/UI) minimalista y funcional.
 - 🤖 **Automatización:** Conectando el mundo mediante n8n, Chatwoot y scripts personalizados en **Python**.
@@ -44,14 +45,6 @@ Me especializo en crear ecosistemas digitales que funcionan solos. Desde el desa
   <img src="https://img.shields.io/badge/Chatwoot-1F2937?style=for-the-badge&logo=chatwoot&logoColor=white" alt="Chatwoot"/>
   <img src="https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL"/>
   <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL"/>
-</p>
-
----
-
-### 📈 Mi Actividad
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=LeandroCasavalle&show_icons=true&theme=dracula" alt="Estadísticas de Leandro" width="48%">
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=LeandroCasavalle&layout=compact&theme=dracula" alt="Lenguajes" width="48%">
 </p>
 
 ---
