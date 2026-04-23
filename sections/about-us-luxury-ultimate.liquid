@@ -1,0 +1,1410 @@
+{% comment %}
+  Section: About Us — Luxury Ultimate Edition
+  Description: Cinematic, minimalist About Us with entry-veil, parallax hero,
+               manifesto, pillars, split content, timeline, philosophy, team,
+               awards, quote and signature blocks. Scroll-jump fixed.
+{% endcomment %}
+
+{%- liquid
+  assign bg    = section.settings.bg_color
+  assign fg    = section.settings.text_color
+  assign alpha = section.settings.overlay_opacity
+-%}
+
+<!-- ══════════════════════════════════════════════════════════
+     ENTRY VEIL — full-screen overlay that lifts on load
+══════════════════════════════════════════════════════════ -->
+<div class="lux-veil" aria-hidden="true"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     CUSTOM CURSOR
+══════════════════════════════════════════════════════════ -->
+<div class="lux-cursor"      aria-hidden="true"></div>
+<div class="lux-cursor-ring" aria-hidden="true"></div>
+<div class="lux-cursor-ring lux-cursor-ring-2" aria-hidden="true"></div>
+
+<div class="lux-wrapper" data-section-id="{{ section.id }}">
+
+  {%- for block in section.blocks -%}
+
+    {%- case block.type -%}
+
+    {%- when 'hero' -%}
+      {%- assign hero = block -%}
+      <section class="lux-hero" {{ block.shopify_attributes }}>
+        {%- if hero.settings.image -%}
+          <div class="lux-hero__bg" data-parallax="true">
+            {{ hero.settings.image | image_url: width: 2400
+               | image_tag: class: 'lux-hero__image', loading: 'eager',
+                            widths: '800,1200,1600,2000,2400',
+                            sizes: '100vw' }}
+          </div>
+        {%- endif -%}
+        <div class="lux-hero__overlay" style="opacity:{{ alpha }};"></div>
+        <div class="lux-hero__content">
+          {%- if hero.settings.title != blank -%}
+            <h1 class="lux-hero__title">
+              {%- assign words = hero.settings.title | split: ' ' -%}
+              {%- for word in words -%}
+                <span class="lux-word">{{ word }}</span>
+              {%- endfor -%}
+            </h1>
+          {%- endif -%}
+          {%- if hero.settings.subtitle != blank -%}
+            <p class="lux-hero__sub" data-reveal>{{ hero.settings.subtitle }}</p>
+          {%- endif -%}
+          <div class="lux-hero__bar-top"   aria-hidden="true"></div>
+          <div class="lux-hero__bar-bottom" aria-hidden="true"></div>
+          <div class="lux-hero__scroll-hint" aria-hidden="true">
+            <span class="lux-scroll-line"></span>
+          </div>
+        </div>
+      </section>
+
+    {%- when 'manifesto' -%}
+      <section class="lux-manifesto" {{ block.shopify_attributes }}>
+        <div class="lux-manifesto__inner" data-reveal>
+          <div class="lux-manifesto__eyebrow">Our Philosophy</div>
+          <div class="lux-manifesto__text">{{ block.settings.text }}</div>
+        </div>
+      </section>
+
+    {%- when 'pillars' -%}
+      <section class="lux-pillars-section" {{ block.shopify_attributes }}>
+        <div class="lux-pillars__grid">
+          {%- for i in (1..3) -%}
+            {%- assign icon_key  = 'pillar_icon_'  | append: i -%}
+            {%- assign title_key = 'pillar_title_' | append: i -%}
+            {%- assign text_key  = 'pillar_text_'  | append: i -%}
+            {%- if block.settings[title_key] != blank -%}
+              <div class="lux-pillar" data-reveal>
+                {%- if block.settings[icon_key] != blank -%}
+                  <div class="lux-pillar__icon">{{ block.settings[icon_key] }}</div>
+                {%- endif -%}
+                <h3 class="lux-pillar__title">{{ block.settings[title_key] }}</h3>
+                <p  class="lux-pillar__text">{{ block.settings[text_key] }}</p>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </section>
+
+    {%- when 'split_content' -%}
+      {%- assign pos = block.settings.image_position | default: 'left' -%}
+      <section class="lux-split lux-split--{{ pos }}" {{ block.shopify_attributes }}>
+        <div class="lux-split__media">
+          {%- if block.settings.image -%}
+            {{ block.settings.image | image_url: width: 1400
+               | image_tag: class: 'lux-split__image', loading: 'lazy',
+                            widths: '600,900,1200,1400',
+                            sizes: '(max-width:768px) 100vw, 50vw' }}
+          {%- endif -%}
+        </div>
+        <div class="lux-split__body" data-reveal>
+          {%- if block.settings.eyebrow != blank -%}
+            <div class="lux-split__eyebrow">{{ block.settings.eyebrow }}</div>
+          {%- endif -%}
+          <h2 class="lux-split__title">{{ block.settings.title }}</h2>
+          <div class="lux-split__text">{{ block.settings.text }}</div>
+        </div>
+      </section>
+
+    {%- when 'full_media' -%}
+      <section class="lux-full-media" {{ block.shopify_attributes }}>
+        {%- if block.settings.image -%}
+          {{ block.settings.image | image_url: width: 2400
+             | image_tag: class: 'lux-full-media__img', loading: 'lazy',
+                          widths: '800,1200,1600,2000,2400',
+                          sizes: '100vw' }}
+        {%- endif -%}
+      </section>
+
+    {%- when 'timeline' -%}
+      <section class="lux-timeline" {{ block.shopify_attributes }}>
+        <div class="lux-timeline__inner">
+          <div class="lux-timeline__eyebrow" data-reveal>Our Journey</div>
+          <ol class="lux-timeline__list">
+            {%- for i in (1..5) -%}
+              {%- assign yr_key   = 'year_'  | append: i -%}
+              {%- assign evt_key  = 'event_' | append: i -%}
+              {%- if block.settings[yr_key] != blank -%}
+                <li class="lux-timeline__item" data-reveal>
+                  <span class="lux-timeline__year">{{ block.settings[yr_key] }}</span>
+                  <p    class="lux-timeline__event">{{ block.settings[evt_key] }}</p>
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ol>
+        </div>
+      </section>
+
+    {%- when 'philosophy' -%}
+      <section class="lux-philosophy" {{ block.shopify_attributes }}>
+        <div class="lux-philosophy__inner" data-reveal>
+          <blockquote class="lux-philosophy__quote">
+            {{ block.settings.quote }}
+          </blockquote>
+        </div>
+      </section>
+
+    {%- when 'team' -%}
+      <section class="lux-team" {{ block.shopify_attributes }}>
+        <div class="lux-team__inner">
+          <div class="lux-team__heading" data-reveal>The People</div>
+          <div class="lux-team__grid">
+            {%- for i in (1..4) -%}
+              {%- assign img_key  = 'member_image_' | append: i -%}
+              {%- assign name_key = 'member_name_'  | append: i -%}
+              {%- assign role_key = 'member_role_'  | append: i -%}
+              {%- if block.settings[name_key] != blank -%}
+                <div class="lux-member" data-reveal>
+                  {%- if block.settings[img_key] -%}
+                    {{ block.settings[img_key] | image_url: width: 800
+                       | image_tag: class: 'lux-member__photo', loading: 'lazy',
+                                    widths: '400,600,800',
+                                    sizes: '(max-width:768px) 80vw, 25vw' }}
+                  {%- endif -%}
+                  <div class="lux-member__name">{{ block.settings[name_key] }}</div>
+                  <div class="lux-member__role">{{ block.settings[role_key] }}</div>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+      </section>
+
+    {%- when 'awards' -%}
+      <section class="lux-awards" {{ block.shopify_attributes }}>
+        <div class="lux-awards__inner" data-reveal>
+          <div class="lux-awards__heading">Recognition</div>
+          <ul class="lux-awards__list">
+            {%- for i in (1..6) -%}
+              {%- assign aw_key = 'award_' | append: i -%}
+              {%- if block.settings[aw_key] != blank -%}
+                <li class="lux-award__item">{{ block.settings[aw_key] }}</li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+      </section>
+
+    {%- when 'quote' -%}
+      <section class="lux-quote" {{ block.shopify_attributes }}>
+        <div class="lux-quote__inner" data-reveal>
+          <p  class="lux-quote__text">{{ block.settings.text }}</p>
+          {%- if block.settings.author != blank -%}
+            <cite class="lux-quote__author">— {{ block.settings.author }}</cite>
+          {%- endif -%}
+        </div>
+      </section>
+
+    {%- when 'signature' -%}
+      <section class="lux-signature" {{ block.shopify_attributes }}>
+        <div class="lux-signature__inner" data-reveal>
+          {%- if block.settings.image -%}
+            {{ block.settings.image | image_url: width: 400
+               | image_tag: class: 'lux-signature__img', loading: 'lazy',
+                            widths: '200,300,400',
+                            sizes: '200px' }}
+          {%- endif -%}
+          {%- if block.settings.name != blank -%}
+            <p class="lux-signature__name">{{ block.settings.name }}</p>
+          {%- endif -%}
+        </div>
+      </section>
+
+    {%- when 'marquee' -%}
+      <section class="lux-marquee-section" {{ block.shopify_attributes }}>
+        <div class="lux-marquee" aria-hidden="true">
+          <div class="lux-marquee__track">
+            {%- assign items = block.settings.text | split: '|' -%}
+            {%- for item in items -%}
+              <span class="lux-marquee__item">{{ item | strip }}</span>
+              <span class="lux-marquee__sep" aria-hidden="true">✦</span>
+            {%- endfor -%}
+            {%- comment -%}duplicate for seamless loop{%- endcomment -%}
+            {%- for item in items -%}
+              <span class="lux-marquee__item">{{ item | strip }}</span>
+              <span class="lux-marquee__sep" aria-hidden="true">✦</span>
+            {%- endfor -%}
+          </div>
+        </div>
+      </section>
+
+    {%- endcase -%}
+  {%- endfor -%}
+
+  <!-- noise texture overlay -->
+  <div class="lux-noise" id="luxNoise" aria-hidden="true"></div>
+
+</div><!-- /.lux-wrapper -->
+
+<!-- ══════════════════════════════════════════════════════════
+     STYLES
+══════════════════════════════════════════════════════════ -->
+<style>
+/* ── Reset & tokens ──────────────────────────────────── */
+.lux-wrapper {
+  --lux-ease   : cubic-bezier(.19,1,.22,1);
+  --lux-dur    : 0.9s;
+  --lux-bg     : {{ bg }};
+  --lux-fg     : {{ fg }};
+  background   : var(--lux-bg);
+  color        : var(--lux-fg);
+  font-family  : 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  overflow-x   : hidden;
+  position     : relative;
+}
+
+/* ── Veil ─────────────────────────────────────────────── */
+/* FIX 2: pointer-events: all + touch-action: none during animation */
+.lux-veil {
+  position         : fixed;
+  inset            : 0;
+  background       : {{ section.settings.bg_color }};
+  z-index          : 8500;
+  /* Block all interaction during entry */
+  pointer-events   : all;
+  touch-action     : none;
+  transform-origin : top;
+  animation        : lux-veil-lift 2.2s var(--lux-ease) 0.1s forwards;
+}
+
+/* FIX 2b: gone state — fully remove from layout */
+.lux-veil.is-gone {
+  pointer-events : none;
+  touch-action   : auto;
+  display        : none;
+}
+
+@keyframes lux-veil-lift {
+  0%   { transform: scaleY(1);   opacity: 1; }
+  80%  { transform: scaleY(0);   opacity: 1; }
+  100% { transform: scaleY(0);   opacity: 0; }
+}
+
+/* ── Custom cursor ───────────────────────────────────── */
+.lux-cursor {
+  position        : fixed;
+  width           : 6px;
+  height          : 6px;
+  background      : var(--lux-fg);
+  border-radius   : 50%;
+  pointer-events  : none;
+  z-index         : 9000;
+  transform       : translate(-50%,-50%);
+  will-change     : transform;
+  transition      : opacity .3s;
+}
+.lux-cursor-ring {
+  position        : fixed;
+  width           : 36px;
+  height          : 36px;
+  border          : 1px solid rgba(255,255,255,.5);
+  border-radius   : 50%;
+  pointer-events  : none;
+  z-index         : 8999;
+  transform       : translate(-50%,-50%);
+  will-change     : transform;
+  transition      : width .3s var(--lux-ease),
+                    height .3s var(--lux-ease),
+                    opacity .3s;
+}
+.lux-cursor-ring-2 {
+  width           : 60px;
+  height          : 60px;
+  border-color    : rgba(255,255,255,.2);
+  transition-delay: .05s;
+}
+
+/* ── Hero ─────────────────────────────────────────────── */
+/* FIX 4: base 100vh with progressive enhancement to 100svh */
+.lux-hero {
+  position    : relative;
+  width       : 100%;
+  height      : 100vh;
+  min-height  : 680px;
+  display     : flex;
+  align-items : flex-end;
+  overflow    : hidden;
+}
+
+@supports (height: 100svh) {
+  .lux-hero {
+    height     : 100svh;
+    min-height : unset;
+  }
+}
+
+@media (max-width: 768px) {
+  .lux-hero {
+    height     : 100svh;
+    min-height : unset;
+  }
+}
+
+.lux-hero__bg {
+  position   : absolute;
+  inset      : -15% 0;
+  will-change: transform;
+}
+.lux-hero__image {
+  width      : 100%;
+  height     : 100%;
+  object-fit : cover;
+  display    : block;
+  will-change: transform;
+}
+.lux-hero__overlay {
+  position   : absolute;
+  inset      : 0;
+  background : var(--lux-bg);
+}
+.lux-hero__content {
+  position   : relative;
+  z-index    : 2;
+  padding    : 0 6vw 8vh;
+  width      : 100%;
+}
+.lux-hero__title {
+  font-size      : clamp(3rem, 9vw, 9rem);
+  font-weight    : 300;
+  letter-spacing : .02em;
+  line-height    : .95;
+  margin         : 0 0 1.5rem;
+  overflow       : hidden;
+}
+.lux-word {
+  display        : inline-block;
+  margin-right   : .25em;
+  transform      : translateY(110%);
+  opacity        : 0;
+  animation      : lux-word-in var(--lux-dur) var(--lux-ease) both;
+}
+.lux-word:nth-child(1) { animation-delay: .5s;  }
+.lux-word:nth-child(2) { animation-delay: .65s; }
+.lux-word:nth-child(3) { animation-delay: .8s;  }
+.lux-word:nth-child(4) { animation-delay: .95s; }
+.lux-word:nth-child(5) { animation-delay: 1.1s; }
+
+@keyframes lux-word-in {
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.lux-hero__sub {
+  font-size      : clamp(.85rem, 1.8vw, 1.3rem);
+  letter-spacing : .35em;
+  text-transform : uppercase;
+  opacity        : 0;
+  animation      : lux-fade-up .8s var(--lux-ease) 1.2s both;
+}
+
+.lux-hero__bar-top,
+.lux-hero__bar-bottom {
+  position   : absolute;
+  left       : 0;
+  right      : 0;
+  height     : 2px;
+  background : rgba(255,255,255,.12);
+}
+.lux-hero__bar-top    { top   : 0; }
+.lux-hero__bar-bottom { bottom: 0; }
+
+.lux-hero__scroll-hint {
+  position : absolute;
+  bottom   : 3vh;
+  right    : 6vw;
+  display  : flex;
+  flex-direction: column;
+  align-items: center;
+  gap      : 6px;
+  opacity  : 0;
+  animation: lux-fade-up .6s var(--lux-ease) 1.8s both;
+}
+.lux-scroll-line {
+  width      : 1px;
+  height     : 60px;
+  background : linear-gradient(to bottom, transparent, var(--lux-fg));
+  animation  : lux-scroll-line 1.8s var(--lux-ease) 2s infinite;
+}
+@keyframes lux-scroll-line {
+  0%   { transform: scaleY(0); transform-origin: top;    opacity: 1; }
+  50%  { transform: scaleY(1); transform-origin: top;    opacity: 1; }
+  51%  { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
+  100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+}
+
+/* ── Manifesto ───────────────────────────────────────── */
+.lux-manifesto {
+  padding        : 14vh 12vw;
+  text-align     : center;
+}
+.lux-manifesto__eyebrow {
+  font-size      : .7rem;
+  letter-spacing : .5em;
+  text-transform : uppercase;
+  opacity        : .45;
+  margin-bottom  : 2rem;
+}
+.lux-manifesto__text {
+  font-size      : clamp(1.6rem, 3.5vw, 3.2rem);
+  font-weight    : 300;
+  line-height    : 1.35;
+  letter-spacing : .02em;
+}
+
+/* ── Pillars ─────────────────────────────────────────── */
+.lux-pillars-section {
+  padding : 10vh 6vw;
+}
+.lux-pillars__grid {
+  display               : grid;
+  grid-template-columns : repeat(3, 1fr);
+  gap                   : 4vw;
+}
+@media (max-width: 768px) {
+  .lux-pillars__grid { grid-template-columns: 1fr; }
+}
+.lux-pillar__icon  { font-size: 1.4rem; margin-bottom: 1rem; opacity: .6; }
+.lux-pillar__title { font-size: 1.1rem; letter-spacing: .2em; text-transform: uppercase; margin-bottom: .8rem; }
+.lux-pillar__text  { font-size: .95rem; line-height: 1.7; opacity: .65; }
+
+/* ── Split content ───────────────────────────────────── */
+.lux-split {
+  display    : grid;
+  grid-template-columns: 1fr 1fr;
+  min-height : 80vh;
+}
+.lux-split--right .lux-split__media { order: 2; }
+.lux-split--right .lux-split__body  { order: 1; }
+.lux-split__media {
+  position   : relative;
+  overflow   : hidden;
+}
+.lux-split__image {
+  width      : 100%;
+  height     : 100%;
+  object-fit : cover;
+  display    : block;
+  will-change: transform;
+  transition : transform 8s var(--lux-ease);
+}
+.lux-split__body {
+  display         : flex;
+  flex-direction  : column;
+  justify-content : center;
+  padding         : 8vw;
+}
+.lux-split__eyebrow {
+  font-size      : .7rem;
+  letter-spacing : .4em;
+  text-transform : uppercase;
+  opacity        : .4;
+  margin-bottom  : 1.5rem;
+}
+.lux-split__title {
+  font-size   : clamp(1.8rem, 3.5vw, 3.2rem);
+  font-weight : 300;
+  margin      : 0 0 1.5rem;
+}
+.lux-split__text {
+  font-size  : 1rem;
+  line-height: 1.8;
+  opacity    : .7;
+}
+@media (max-width: 768px) {
+  .lux-split {
+    grid-template-columns : 1fr;
+    min-height            : unset;
+  }
+  .lux-split--right .lux-split__media { order: 0; }
+  .lux-split--right .lux-split__body  { order: 1; }
+  .lux-split__media { height: 55vw; }
+  .lux-split__body  { padding: 10vw 6vw; }
+}
+
+/* ── Full-media ──────────────────────────────────────── */
+/* FIX 5: breakpoint changed from 768px to 1024px */
+.lux-full-media {
+  position   : relative;
+  width      : 100%;
+  height     : 100vh;
+  overflow   : hidden;
+}
+
+@supports (height: 100svh) {
+  .lux-full-media {
+    height : 100svh;
+  }
+}
+
+@media (max-width: 1024px) {
+  .lux-full-media {
+    height     : 70vw;
+    min-height : 340px;
+    max-height : 580px;
+  }
+}
+
+.lux-full-media__img {
+  width      : 100%;
+  height     : 100%;
+  object-fit : cover;
+  display    : block;
+  will-change: transform;
+}
+
+/* ── Timeline ────────────────────────────────────────── */
+.lux-timeline {
+  padding : 12vh 8vw;
+}
+.lux-timeline__eyebrow {
+  font-size      : .7rem;
+  letter-spacing : .5em;
+  text-transform : uppercase;
+  opacity        : .4;
+  margin-bottom  : 5rem;
+  text-align     : center;
+}
+.lux-timeline__list {
+  list-style : none;
+  padding    : 0;
+  margin     : 0;
+  border-left: 1px solid rgba(255,255,255,.12);
+  padding-left: 3rem;
+  display    : flex;
+  flex-direction: column;
+  gap        : 3.5rem;
+}
+.lux-timeline__item {
+  position : relative;
+}
+.lux-timeline__item::before {
+  content    : '';
+  position   : absolute;
+  left       : -3rem;
+  top        : .4em;
+  width      : 6px;
+  height     : 6px;
+  background : var(--lux-fg);
+  border-radius: 50%;
+  transform  : translateX(-3px);
+}
+.lux-timeline__year {
+  font-size      : .7rem;
+  letter-spacing : .35em;
+  text-transform : uppercase;
+  opacity        : .45;
+  display        : block;
+  margin-bottom  : .4rem;
+}
+.lux-timeline__event {
+  font-size  : clamp(1rem, 2vw, 1.5rem);
+  font-weight: 300;
+  margin     : 0;
+  line-height: 1.4;
+}
+
+/* ── Philosophy / quote ──────────────────────────────── */
+.lux-philosophy {
+  padding    : 12vh 15vw;
+  text-align : center;
+}
+.lux-philosophy__quote {
+  font-size      : clamp(1.6rem, 3vw, 2.8rem);
+  font-weight    : 300;
+  font-style     : italic;
+  line-height    : 1.4;
+  margin         : 0;
+}
+
+.lux-quote {
+  padding    : 12vh 15vw;
+  text-align : center;
+}
+.lux-quote__text {
+  font-size      : clamp(1.4rem, 2.8vw, 2.5rem);
+  font-weight    : 300;
+  font-style     : italic;
+  line-height    : 1.45;
+  margin         : 0 0 1.5rem;
+}
+.lux-quote__author {
+  font-size      : .75rem;
+  letter-spacing : .35em;
+  text-transform : uppercase;
+  opacity        : .45;
+  font-style     : normal;
+}
+
+/* ── Team ────────────────────────────────────────────── */
+.lux-team {
+  padding : 10vh 6vw;
+}
+.lux-team__heading {
+  font-size      : .7rem;
+  letter-spacing : .5em;
+  text-transform : uppercase;
+  opacity        : .4;
+  margin-bottom  : 5rem;
+  text-align     : center;
+}
+.lux-team__grid {
+  display               : grid;
+  grid-template-columns : repeat(4, 1fr);
+  gap                   : 3vw;
+}
+@media (max-width: 768px) {
+  .lux-team__grid { grid-template-columns: 1fr 1fr; gap: 6vw 4vw; }
+}
+.lux-member__photo {
+  width      : 100%;
+  aspect-ratio: 3/4;
+  object-fit : cover;
+  display    : block;
+  margin-bottom: 1rem;
+  filter     : grayscale(1);
+  transition : filter .6s var(--lux-ease);
+}
+.lux-member:hover .lux-member__photo { filter: grayscale(0); }
+.lux-member__name { font-size: 1rem; letter-spacing: .1em; margin-bottom: .3rem; }
+.lux-member__role { font-size: .75rem; opacity: .45; letter-spacing: .2em; text-transform: uppercase; }
+
+/* ── Awards ──────────────────────────────────────────── */
+.lux-awards {
+  padding : 10vh 6vw;
+}
+.lux-awards__heading {
+  font-size      : .7rem;
+  letter-spacing : .5em;
+  text-transform : uppercase;
+  opacity        : .4;
+  margin-bottom  : 4rem;
+  text-align     : center;
+}
+.lux-awards__list {
+  list-style : none;
+  padding    : 0;
+  margin     : 0 auto;
+  max-width  : 800px;
+  display    : flex;
+  flex-direction: column;
+  gap        : 1.5rem;
+}
+.lux-award__item {
+  font-size      : clamp(.9rem, 1.6vw, 1.3rem);
+  font-weight    : 300;
+  padding-bottom : 1.5rem;
+  border-bottom  : 1px solid rgba(255,255,255,.1);
+  letter-spacing : .05em;
+}
+
+/* ── Signature ───────────────────────────────────────── */
+.lux-signature {
+  padding    : 8vh 6vw 14vh;
+  text-align : center;
+}
+.lux-signature__img  { max-width: 160px; opacity: .7; margin-bottom: 1rem; filter: invert(1); }
+.lux-signature__name { font-size: .75rem; letter-spacing: .4em; text-transform: uppercase; opacity: .45; }
+
+/* ── Marquee ─────────────────────────────────────────── */
+.lux-marquee-section {
+  overflow-x : hidden;
+  overflow-y : visible;
+  padding    : 4vh 0;
+  border-top : 1px solid rgba(255,255,255,.08);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.lux-marquee__track {
+  display          : flex;
+  align-items      : center;
+  gap              : 3rem;
+  white-space      : nowrap;
+  animation        : lux-marquee 30s linear infinite;
+  will-change      : transform;
+}
+@keyframes lux-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.lux-marquee__item {
+  font-size      : clamp(.7rem, 1.2vw, 1rem);
+  letter-spacing : .4em;
+  text-transform : uppercase;
+  opacity        : .4;
+}
+.lux-marquee__sep { opacity: .2; font-size: .5rem; }
+
+/* ── Noise ───────────────────────────────────────────── */
+.lux-noise {
+  position       : fixed;
+  inset          : -50%;
+  width          : 200%;
+  height         : 200%;
+  pointer-events : none;
+  z-index        : 9100;
+  opacity        : .025;
+  will-change    : transform;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px;
+  animation      : lux-noise .5s steps(2) infinite;
+}
+@keyframes lux-noise {
+  0%   { transform: translate(0,0); }
+  25%  { transform: translate(-5%,-5%); }
+  50%  { transform: translate(5%,0); }
+  75%  { transform: translate(-3%,3%); }
+  100% { transform: translate(3%,-3%); }
+}
+
+/* ── Reveal animation ────────────────────────────────── */
+[data-reveal] {
+  opacity   : 0;
+  transform : translateY(30px);
+  transition: opacity .9s var(--lux-ease), transform .9s var(--lux-ease);
+}
+[data-reveal].is-visible {
+  opacity   : 1;
+  transform : translateY(0);
+}
+
+/* ── Utility ─────────────────────────────────────────── */
+@keyframes lux-fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE SCROLL FIX — prevents sub-displacement on reload
+══════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+
+  /* Remove will-change on mobile — causes GPU layer scroll traps */
+  .lux-hero__bg,
+  .lux-hero__image,
+  .lux-full-media__img,
+  .lux-split__image,
+  .lux-cursor,
+  .lux-cursor-ring,
+  .lux-cursor-ring-2,
+  .lux-noise {
+    will-change : auto !important;
+  }
+
+  /* Noise layer — completely remove on mobile */
+  .lux-noise {
+    display : none !important;
+  }
+
+  /* Sections that must never trap scroll */
+  .lux-logo-reveal,
+  .lux-manifesto,
+  .lux-pillars-section,
+  .lux-timeline,
+  .lux-philosophy,
+  .lux-team,
+  .lux-awards,
+  .lux-quote,
+  .lux-signature {
+    overflow   : visible;
+    min-height : unset;
+  }
+
+  /* Marquee — only hide overflow on X axis */
+  .lux-marquee-section {
+    overflow-x : hidden;
+    overflow-y : visible;
+  }
+
+  /* Split — remove min-height that causes scroll trapping */
+  .lux-split {
+    min-height : unset;
+  }
+
+  /* Hero bars — reduce on mobile to avoid height mismatch */
+  .lux-hero__bar-top,
+  .lux-hero__bar-bottom {
+    height : 0 !important;
+  }
+}
+</style>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════════════════════════ -->
+<script>
+/* FIX 8: Immediate scroll lock — runs before IIFE */
+(function lockScroll() {
+  document.documentElement.style.overflowY = 'hidden';
+  /* Unlock after veil completes */
+  setTimeout(function () {
+    document.documentElement.style.overflowY = '';
+  }, 2500);
+}());
+
+/* FIX 1: Prevent scroll during page entry veil */
+document.documentElement.style.overflow = 'hidden';
+document.body.style.overflow = 'hidden';
+setTimeout(function () {
+  document.documentElement.style.overflow = '';
+  document.body.style.overflow = '';
+}, 2400); // matches veil animation duration
+
+(function () {
+  'use strict';
+
+  /* FIX 3: Remove veil from DOM after animation completes */
+  var veilEl = document.querySelector('.lux-veil');
+  if (veilEl) {
+    setTimeout(function () {
+      veilEl.classList.add('is-gone');
+      /* Fully remove from layout to prevent any scroll interference */
+      veilEl.style.display = 'none';
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    }, 2350);
+  }
+
+  /* ── Helpers ──────────────────────────────────────────── */
+  var isMob = window.innerWidth <= 1024;
+
+  /* ── Custom cursor ────────────────────────────────────── */
+  if (!isMob) {
+    var cur  = document.querySelector('.lux-cursor');
+    var ring = document.querySelectorAll('.lux-cursor-ring');
+    var mx = 0, my = 0, rx = 0, ry = 0, r2x = 0, r2y = 0;
+    var RING_DELAY = 0.08, RING2_DELAY = 0.14;
+
+    document.addEventListener('mousemove', function (e) {
+      mx = e.clientX; my = e.clientY;
+    });
+
+    (function animCursor() {
+      if (cur) {
+        cur.style.left = mx + 'px';
+        cur.style.top  = my + 'px';
+      }
+      rx += (mx - rx) * (1 - RING_DELAY);
+      ry += (my - ry) * (1 - RING_DELAY);
+      r2x += (mx - r2x) * (1 - RING2_DELAY);
+      r2y += (my - r2y) * (1 - RING2_DELAY);
+      if (ring[0]) { ring[0].style.left = rx + 'px';  ring[0].style.top = ry + 'px'; }
+      if (ring[1]) { ring[1].style.left = r2x + 'px'; ring[1].style.top = r2y + 'px'; }
+      requestAnimationFrame(animCursor);
+    }());
+
+    document.querySelectorAll('a, button').forEach(function (el) {
+      el.addEventListener('mouseenter', function () {
+        if (cur)    { cur.style.transform   = 'translate(-50%,-50%) scale(2)'; }
+        if (ring[0]){ ring[0].style.width   = '56px'; ring[0].style.height = '56px'; }
+        if (ring[1]){ ring[1].style.width   = '80px'; ring[1].style.height = '80px'; }
+      });
+      el.addEventListener('mouseleave', function () {
+        if (cur)    { cur.style.transform   = 'translate(-50%,-50%) scale(1)'; }
+        if (ring[0]){ ring[0].style.width   = '36px'; ring[0].style.height = '36px'; }
+        if (ring[1]){ ring[1].style.width   = '60px'; ring[1].style.height = '60px'; }
+      });
+    });
+  } else {
+    /* Hide cursor on mobile */
+    ['.lux-cursor', '.lux-cursor-ring', '.lux-cursor-ring-2'].forEach(function (sel) {
+      var el = document.querySelector(sel);
+      if (el) el.style.display = 'none';
+    });
+  }
+
+  /* ── Parallax hero ────────────────────────────────────── */
+  if (!isMob) {
+    var heroBg = document.querySelector('.lux-hero__bg');
+    if (heroBg) {
+      window.addEventListener('scroll', function () {
+        var y = window.pageYOffset;
+        heroBg.style.transform = 'translateY(' + (y * 0.3) + 'px)';
+      }, { passive: true });
+    }
+  }
+
+  /* ── Scroll-reveal (IntersectionObserver) ─────────────── */
+  if ('IntersectionObserver' in window) {
+    var revealObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('[data-reveal]').forEach(function (el) {
+      revealObs.observe(el);
+    });
+  } else {
+    /* Fallback — show everything immediately */
+    document.querySelectorAll('[data-reveal]').forEach(function (el) {
+      el.classList.add('is-visible');
+    });
+  }
+
+  /* ── MOBILE SCROLL FIX ────────────────────────────── */
+  if (isMob) {
+
+    /* 1. Disable all parallax on mobile */
+    document.querySelectorAll('[data-parallax="true"]').forEach(function (el) {
+      el.removeAttribute('data-parallax');
+      el.style.transform  = 'translateY(-15%)';
+      el.style.willChange = 'auto';
+    });
+
+    var heroBgEl = document.querySelector('.lux-hero__bg');
+    if (heroBgEl) {
+      heroBgEl.style.willChange = 'auto';
+      heroBgEl.style.transform  = 'none';
+    }
+
+    var heroImgEl = document.querySelector('.lux-hero__image');
+    if (heroImgEl) {
+      heroImgEl.style.willChange = 'auto';
+    }
+
+    /* 2. Remove noise element completely */
+    var noiseEl = document.getElementById('luxNoise') || document.querySelector('.lux-noise');
+    if (noiseEl) noiseEl.parentNode.removeChild(noiseEl);
+
+    /* 3. Remove will-change from all animated elements */
+    document.querySelectorAll('.lux-wrapper *').forEach(function (el) {
+      var wc = getComputedStyle(el).willChange;
+      if (wc && wc !== 'auto') {
+        el.style.willChange = 'auto';
+      }
+    });
+
+    /* 4. Disable scroll-based JS listeners by overriding parallax update */
+    window.addEventListener('scroll', function () {
+      /* No-op — all parallax disabled on mobile */
+    }, { passive: true });
+
+  }
+
+}());
+</script>
+
+{% schema %}
+{
+  "name": "Luxury About Us",
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "label": "Hero Overlay Opacity",
+      "default": 0.4
+    }
+  ],
+  "blocks": [
+    {
+      "type": "hero",
+      "name": "Hero Banner",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Background Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Maison Meszarics"
+        },
+        {
+          "type": "textarea",
+          "id": "subtitle",
+          "label": "Subtitle",
+          "default": "Defining the new era of minimalism."
+        },
+        {
+          "type": "color",
+          "id": "text_color_override",
+          "label": "Text Color Override",
+          "default": "#ffffff"
+        }
+      ]
+    },
+    {
+      "type": "manifesto",
+      "name": "Manifesto Text",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Statement",
+          "default": "<p>We create in the shadows to bring light to the form. A commitment to uncompromising aesthetics.</p>"
+        }
+      ]
+    },
+    {
+      "type": "pillars",
+      "name": "Brand Pillars",
+      "settings": [
+        {
+          "type": "text",
+          "id": "pillar_title_1",
+          "label": "Pillar 1 Title",
+          "default": "Craftsmanship"
+        },
+        {
+          "type": "textarea",
+          "id": "pillar_text_1",
+          "label": "Pillar 1 Text",
+          "default": "Every detail crafted with intention and precision."
+        },
+        {
+          "type": "text",
+          "id": "pillar_title_2",
+          "label": "Pillar 2 Title",
+          "default": "Heritage"
+        },
+        {
+          "type": "textarea",
+          "id": "pillar_text_2",
+          "label": "Pillar 2 Text",
+          "default": "Rooted in tradition, elevated for the modern era."
+        },
+        {
+          "type": "text",
+          "id": "pillar_title_3",
+          "label": "Pillar 3 Title",
+          "default": "Vision"
+        },
+        {
+          "type": "textarea",
+          "id": "pillar_text_3",
+          "label": "Pillar 3 Text",
+          "default": "A forward-thinking approach to timeless aesthetics."
+        }
+      ]
+    },
+    {
+      "type": "split_content",
+      "name": "Image with Text",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "select",
+          "id": "image_position",
+          "label": "Image Position",
+          "options": [
+            { "value": "left",  "label": "Left" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "left"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow Label"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "The Heritage"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Every stitch, every cut, every silhouette is born from a desire to strip away the unnecessary. Pure form.</p>"
+        }
+      ]
+    },
+    {
+      "type": "full_media",
+      "name": "Full Width Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        }
+      ]
+    },
+    {
+      "type": "timeline",
+      "name": "Timeline",
+      "settings": [
+        {
+          "type": "text",
+          "id": "year_1",
+          "label": "Year 1",
+          "default": "2010"
+        },
+        {
+          "type": "textarea",
+          "id": "event_1",
+          "label": "Event 1",
+          "default": "Founded in Milan with a single atelier."
+        },
+        {
+          "type": "text",
+          "id": "year_2",
+          "label": "Year 2",
+          "default": "2014"
+        },
+        {
+          "type": "textarea",
+          "id": "event_2",
+          "label": "Event 2",
+          "default": "First international collection launched."
+        },
+        {
+          "type": "text",
+          "id": "year_3",
+          "label": "Year 3",
+          "default": "2018"
+        },
+        {
+          "type": "textarea",
+          "id": "event_3",
+          "label": "Event 3",
+          "default": "Expansion into digital luxury retail."
+        },
+        {
+          "type": "text",
+          "id": "year_4",
+          "label": "Year 4",
+          "default": "2022"
+        },
+        {
+          "type": "textarea",
+          "id": "event_4",
+          "label": "Event 4",
+          "default": "Award-winning flagship store opens."
+        },
+        {
+          "type": "text",
+          "id": "year_5",
+          "label": "Year 5",
+          "default": "2024"
+        },
+        {
+          "type": "textarea",
+          "id": "event_5",
+          "label": "Event 5",
+          "default": "A new chapter in conscious luxury begins."
+        }
+      ]
+    },
+    {
+      "type": "philosophy",
+      "name": "Philosophy Quote",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "quote",
+          "label": "Quote",
+          "default": "<p>\"Luxury is not about excess. It is about the absence of everything unnecessary.\"</p>"
+        }
+      ]
+    },
+    {
+      "type": "team",
+      "name": "Team",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "member_image_1",
+          "label": "Member 1 Photo"
+        },
+        {
+          "type": "text",
+          "id": "member_name_1",
+          "label": "Member 1 Name",
+          "default": "Alessandro Meszarics"
+        },
+        {
+          "type": "text",
+          "id": "member_role_1",
+          "label": "Member 1 Role",
+          "default": "Creative Director"
+        },
+        {
+          "type": "image_picker",
+          "id": "member_image_2",
+          "label": "Member 2 Photo"
+        },
+        {
+          "type": "text",
+          "id": "member_name_2",
+          "label": "Member 2 Name",
+          "default": "Sofia Laurent"
+        },
+        {
+          "type": "text",
+          "id": "member_role_2",
+          "label": "Member 2 Role",
+          "default": "Head of Design"
+        },
+        {
+          "type": "image_picker",
+          "id": "member_image_3",
+          "label": "Member 3 Photo"
+        },
+        {
+          "type": "text",
+          "id": "member_name_3",
+          "label": "Member 3 Name",
+          "default": "Marco Vieri"
+        },
+        {
+          "type": "text",
+          "id": "member_role_3",
+          "label": "Member 3 Role",
+          "default": "Master Artisan"
+        },
+        {
+          "type": "image_picker",
+          "id": "member_image_4",
+          "label": "Member 4 Photo"
+        },
+        {
+          "type": "text",
+          "id": "member_name_4",
+          "label": "Member 4 Name",
+          "default": "Elena Rossi"
+        },
+        {
+          "type": "text",
+          "id": "member_role_4",
+          "label": "Member 4 Role",
+          "default": "Brand Strategist"
+        }
+      ]
+    },
+    {
+      "type": "awards",
+      "name": "Awards",
+      "settings": [
+        {
+          "type": "text",
+          "id": "award_1",
+          "label": "Award 1",
+          "default": "Wallpaper* Design Award — Best New Luxury Brand"
+        },
+        {
+          "type": "text",
+          "id": "award_2",
+          "label": "Award 2",
+          "default": "Forbes — 30 Most Influential Luxury Houses"
+        },
+        {
+          "type": "text",
+          "id": "award_3",
+          "label": "Award 3",
+          "default": "Vogue Business — Innovation in Fashion Retail"
+        },
+        {
+          "type": "text",
+          "id": "award_4",
+          "label": "Award 4"
+        },
+        {
+          "type": "text",
+          "id": "award_5",
+          "label": "Award 5"
+        },
+        {
+          "type": "text",
+          "id": "award_6",
+          "label": "Award 6"
+        }
+      ]
+    },
+    {
+      "type": "quote",
+      "name": "Closing Quote",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Quote Text",
+          "default": "<p>\"The future belongs to those who define it.\"</p>"
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author",
+          "default": "Alessandro Meszarics, Founder"
+        }
+      ]
+    },
+    {
+      "type": "signature",
+      "name": "Founder Signature",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Signature Image"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name",
+          "default": "Alessandro Meszarics"
+        }
+      ]
+    },
+    {
+      "type": "marquee",
+      "name": "Marquee Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Items (separate with |)",
+          "default": "Craftsmanship | Heritage | Innovation | Luxury | Precision | Vision"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxury About Us",
+      "blocks": [
+        { "type": "hero" },
+        { "type": "manifesto" },
+        { "type": "pillars" },
+        { "type": "split_content" },
+        { "type": "full_media" },
+        { "type": "timeline" },
+        { "type": "philosophy" },
+        { "type": "team" },
+        { "type": "awards" },
+        { "type": "quote" },
+        { "type": "signature" },
+        { "type": "marquee" }
+      ]
+    }
+  ]
+}
+{% endschema %}
